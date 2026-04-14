@@ -1,3 +1,5 @@
+import { createClient } from "@/utils/supabase/server";
+import { GetServerSideProps } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Image from "next/image";
 
@@ -112,3 +114,8 @@ export default function Home() {
     </div>
   );
 }
+
+
+// export const getServerSideProps: GetServerSideProps = async ({req}) => {
+//   createClient(req.cookies); 
+// }
