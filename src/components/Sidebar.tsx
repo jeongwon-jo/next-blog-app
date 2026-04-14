@@ -2,6 +2,7 @@ import { cn } from "@/utils/style";
 import Link from "next/link";
 import { FC } from "react";
 import { AiFillGithub, AiFillInstagram, AiOutlineClose } from "react-icons/ai";
+import IconButton from "./IconButton";
 
 type SidebarProps = {
   close: () => void;
@@ -10,9 +11,14 @@ type SidebarProps = {
 
 const Sidebar:FC<SidebarProps> = ({close, isOpen}) => {
   return (
-    <div className={cn('absolute min-h-screen flex-col gap-6 border-r bg-white px-6 py-10 text-base lg:relative', isOpen ? 'flex' : 'hidden')}>
+    <div
+      className={cn(
+        'absolute min-h-screen flex-col gap-6 border-r bg-white px-6 py-10 text-base lg:relative',
+        isOpen ? 'flex' : 'hidden',
+      )}
+    >
       <div className="flex justify-end lg:hidden">
-        <AiOutlineClose className="size-6" onClick={close} />
+        <IconButton Icon={AiOutlineClose} onClick={close} />
       </div>
       <Link
         href={'/'}
@@ -34,12 +40,8 @@ const Sidebar:FC<SidebarProps> = ({close, isOpen}) => {
       </Link>
 
       <div className="mt-10 flex items-center gap-4">
-        <Link href={''}>
-          <AiFillInstagram className="size-6" />
-        </Link>
-        <Link href={''}>
-          <AiFillGithub className="size-6" />
-        </Link>
+        <IconButton Icon={AiFillInstagram} component={Link} href={''} />
+        <IconButton Icon={AiFillGithub} component={Link} href={''} />
       </div>
     </div>
   );
