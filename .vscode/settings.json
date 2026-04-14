@@ -1,4 +1,12 @@
 {
   "tailwindCSS.experimental.configFile": "tailwind.config.ts",
-  "tailwindCSS.classFunctions": ["cva", "cx", "cn"],
+  "tailwindCSS.classFunctions": [
+    "cva",
+    "cx",
+    "cn"
+  ],
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": "explicit",
+    "source.fixAll.eslint": "always"
+  },
 }
