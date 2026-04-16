@@ -17,7 +17,7 @@ const Header: FC<HeaderProps> = ({isSidebarOpen, setIsSidebarOpen}) => {
         Icon={isSidebarOpen ? AiOutlineClose : AiOutlineMenu}
       />
       <Link href={'/'}>
-        <h1 className="text-3xl font-semibold text-slate-600 lg:text-4xl">
+        <h1 className="text-3xl font-bold text-slate-700 lg:text-4xl">
           JEONG1 LOG
         </h1>
       </Link>
