@@ -3,13 +3,24 @@ import { Post } from "@/types";
 import { createClient } from "@/utils/supabase/server";
 import { format } from "date-fns";
 import { GetServerSideProps } from "next";
+import Head from "next/head";
 import Image from 'next/image';
 import Link from "next/link";
 
 type PostProps = Post
 
-export default function PostDtl({id, title, category, tags, content, created_at, preview_image_url}: PostProps) {
+export default function PostDtl({title, category, tags, content, created_at, preview_image_url}: PostProps) {
   return (
+    <>
+      <Head>
+        <title>{title} | jjeong1Log</title>
+        <meta name="description" content={content.slice(0, 100)} />
+        <meta property="og:type" content="article" />
+        <meta property="og:site_name" content="jjeong1Log" />
+        <meta property="og:title" content={title} />
+        <meta property="og:description" content={content.slice(0, 100)} />
+        {preview_image_url && <meta property="og:image" content={preview_image_url} />}
+      </Head>
     <div className="container mx-auto flex flex-col gap-8 px-4 pb-40 pt-20">
       <h1 className="text-4xl font-bold">{title}</h1>
       <div className="flex flex-row items-center gap-2">
@@ -44,6 +55,7 @@ export default function PostDtl({id, title, category, tags, content, created_at,
       )}
       <MarkdownViewer source={content} className="w-full min-w-full" />
     </div>
+    </>
   );
 }
 
