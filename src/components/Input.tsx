@@ -6,7 +6,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
   ({ className, ...rest }, ref) => {
     return (
       <input
-        className={`rounded-md border border-gray-300 p-2 transition-all hover:border-gray-400 ${className}`}
+        className={`rounded-md border border-gray-300 p-2 py-2.5 transition-all hover:border-gray-400 ${className}`}
         ref={ref}
         {...rest}
       />

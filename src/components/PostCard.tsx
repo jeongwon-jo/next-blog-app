@@ -12,7 +12,7 @@ const PostCard: FC<PostCardProps> = ({
 }) => {
   return (
     <Link href={`/posts/${id}`} className={cn("bg-white", className)}>
-      <div className="relative aspect-[1.8/1] w-full border border-gray-300 p-2">
+      <div className="relative aspect-[1.8/1] w-full overflow-hidden rounded-md border border-gray-300 p-2">
         <Image src={preview_image_url ?? "/no_image.webp"} fill alt={title} sizes="360px" className="object-cover" />
       </div>
       <div className="px-1 py-2">

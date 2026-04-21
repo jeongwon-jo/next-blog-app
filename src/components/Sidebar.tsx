@@ -1,4 +1,6 @@
+import { useCategories } from "@/utils/hooks";
 import { cn } from "@/utils/style";
+import { createClient } from "@/utils/supabase/client";
 import Link from "next/link";
 import { FC } from "react";
 import { AiFillGithub, AiFillInstagram, AiOutlineClose } from "react-icons/ai";
@@ -9,11 +11,15 @@ type SidebarProps = {
   isOpen: boolean;
 }
 
+const supabase = createClient()
+
 const Sidebar:FC<SidebarProps> = ({close, isOpen}) => {
+  const {data: existingCategories} = useCategories()
+  
   return (
     <div
       className={cn(
-        'absolute z-10 min-h-screen flex-col gap-6 border-r bg-white px-6 py-10 text-base lg:relative',
+        'absolute z-10 min-h-screen flex-col gap-6 border-r bg-gray-50 px-6 py-10 text-base lg:relative',
         isOpen ? 'flex' : 'hidden',
       )}
     >
@@ -27,17 +33,20 @@ const Sidebar:FC<SidebarProps> = ({close, isOpen}) => {
         홈
       </Link>
       <Link
-        href={'/tag'}
+        href={'/tags'}
         className="w-48 font-medium text-gray-600 hover:underline"
       >
         태그
       </Link>
-      <Link
-        href={'/category/web-Development'}
-        className="w-48 font-medium text-gray-600 hover:underline"
-      >
-        Web Development
-      </Link>
+      {existingCategories?.map((category) => (
+        <Link
+          key={category}
+          href={`/categories/${category}`}
+          className="w-48 font-medium text-gray-600 hover:underline"
+        >
+          {category}
+        </Link>
+      ))}
 
       <div className="mt-10 flex items-center gap-4">
         <IconButton Icon={AiFillInstagram} component={Link} href={''} />

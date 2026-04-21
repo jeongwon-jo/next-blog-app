@@ -15,6 +15,10 @@ export default {
       screens: {
         lg: "780px",
       },
+      container: {
+        center: true,
+        padding: "20px"
+      }
     },
   },
   plugins: [],
