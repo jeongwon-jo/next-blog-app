@@ -1,13 +1,6 @@
-
+import PostList from "@/components/PostList";
 
 
 export default function Home() {
-  return (
-    <></>
-  );
+  return <PostList />
 }
-
-
-// export const getServerSideProps: GetServerSideProps = async ({req}) => {
-//   createClient(req.cookies); 
-// }
