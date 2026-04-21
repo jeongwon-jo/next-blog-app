@@ -34,7 +34,7 @@ export default function App({ Component, pageProps }: AppProps) {
         <div className="flex flex-1 flex-col">
           <Header isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} />
           <div className="flex flex-1 flex-col overflow-y-auto">
-            <main className="flex-1 pb-20 pt-8">
+            <main className="flex flex-1 flex-col pb-12 pt-8">
               <Component {...pageProps} />
             </main>
             <Footer />
