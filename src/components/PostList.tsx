@@ -26,8 +26,6 @@ const PostList:FC<PostListProps> = ({category, tag, className}) => {
       const {data} = await request.order("created_at", {ascending: false})
       .range(pageParam, pageParam+4)
 
-      console.log(data);
-      
       if(!data) 
         return {
           posts: [],

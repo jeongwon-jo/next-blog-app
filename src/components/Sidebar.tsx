@@ -1,6 +1,5 @@
 import { useCategories } from "@/utils/hooks";
 import { cn } from "@/utils/style";
-import { createClient } from "@/utils/supabase/client";
 import Link from "next/link";
 import { FC } from "react";
 import { AiFillGithub, AiFillInstagram, AiOutlineClose } from "react-icons/ai";
@@ -10,8 +9,6 @@ type SidebarProps = {
   close: () => void;
   isOpen: boolean;
 }
-
-const supabase = createClient()
 
 const Sidebar:FC<SidebarProps> = ({close, isOpen}) => {
   const {data: existingCategories} = useCategories()
