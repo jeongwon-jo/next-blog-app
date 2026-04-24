@@ -1,11 +1,13 @@
 import IconButton from "@/components/IconButton";
 import Message, { MessageProps } from "@/components/Message";
+import { Post } from "@/types";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import type { ChatCompletionMessageParam } from "openai/resources/index.mjs";
 import { FormEvent, useCallback, useMemo, useRef, useState } from "react";
 import { AiOutlineSearch } from "react-icons/ai";
 import Button from "./Button";
+import { PostCardProps } from "./PostCard";
 
 
 export const SearchPage = () => {
@@ -57,14 +59,45 @@ export const SearchPage = () => {
 
 
   const messagePropsList = useMemo(() => {
-    return messageParams.filter((param): param is MessageProps => param.role === "assistant" || param.role === "user", )
+    let posts: Post[] = [];
+
+    const result = messageParams.reduce<MessageProps[]>((acc, cur) => {
+      if(cur.role === "tool" && typeof cur.content === "string") {
+        posts.push(JSON.parse(cur.content) as Omit<PostCardProps, "className">)
+      }
+
+      if(cur.role === "user") {
+        posts = [];
+        return [...acc, cur as MessageProps]
+      }
+
+      if(cur.role === "assistant") {
+        const newResult = [
+          ...acc, 
+          {
+            ...cur,
+            posts: [...posts],
+          } as MessageProps
+        ];
+
+        posts = [];
+        return newResult
+      }
+
+      return acc;
+    }, [])
+
+    return result
   }, [messageParams])
   
   return (
     <div className="flex h-full flex-1 flex-col">
       <div className="flex-1">
         <Message content="무엇이든 물어보세요" role="assistant"/>
-        {messagePropsList.map((props, i) => <Message {...props} key={i} />)}
+        {messagePropsList.map((props, i) => 
+          props.content != null ?
+          <Message {...props} key={i} /> : ""
+        )}
 
         {isPending && <Message content="생각중..." role="assistant"/>}
       </div>

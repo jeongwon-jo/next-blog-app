@@ -4,9 +4,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { FC } from "react";
 
-type PostCardProps  = Post & {
+export type PostCardProps  = Post & {
   className?: string;
 }
+
 const PostCard: FC<PostCardProps> = ({
   id, title, content, preview_image_url, className
 }) => {
