@@ -1,25 +1,66 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&display=swap");
+@font-face {
+    font-family: 'Paperozi';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-4Regular.woff2') format('woff2');
+    font-weight: 400;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Paperozi';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-5Medium.woff2') format('woff2');
+    font-weight: 500;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Paperozi';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-6SemiBold.woff2') format('woff2');
+    font-weight: 600;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Paperozi';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-7Bold.woff2') format('woff2');
+    font-weight: 700;
+    font-display: swap;
+}
 @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css");
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #1a0533;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #0d0118;
+    --foreground: #f0e6ff;
   }
 }
 
+html {
+  overflow-x: hidden;
+  border: 4px solid rgb(244 114 182);
+}
 
 body {
+  overflow-x: hidden;
   color: var(--foreground);
   background: var(--background);
-  font-family: "Pretendard", sans-serif;
+  font-family: "Paperozi", "Pretendard", sans-serif;
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+}
+::-webkit-scrollbar-track {
+  background: #fdf4ff;
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #f4368e, #9333ea);
+  border-radius: 9999px;
 }
 
 ul {
@@ -32,4 +73,15 @@ ol {
 
 .container {
   max-width: 1400px;
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, #f4368e, #9333ea, #3b82f6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.pretendard {
+  font-family: "Pretendard";
 }

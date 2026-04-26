@@ -11,17 +11,18 @@ export type MessageProps = {
 
 const Message:FC<MessageProps> = ({content, role, posts}) => {
   return (
-    <div className={cn("p-4 lg:p-6", role === "user"? "bg-white" : "bg-gray-100")}>
+    <div className={cn("p-4 lg:p-6", role === "user" ? "bg-white" : "bg-fuchsia-50")}>
       <div className="container flex items-start gap-3 lg:gap-4">
-        {
-          role === "user" ? <BsFillPersonFill className="size-6 shrink-0"/> : <BsRobot className="size-6 shrink-0" />
+        {role === "user"
+          ? <BsFillPersonFill className="size-6 shrink-0 text-purple-500" />
+          : <BsRobot className="size-6 shrink-0 text-fuchsia-500" />
         }
         <div className="flex flex-col items-start">
-          <div className="whitespace-pre-wrap">{content}</div>
+          <div className="whitespace-pre-wrap text-purple-900">{content}</div>
           {posts && posts.length > 0 && (
             <div className="mt-4 flex justify-start">
               {posts.map((post) => (
-                <PostCard {...post} key={post.id} className="w-[300px] border" /> 
+                <PostCard {...post} key={post.id} className="w-[300px] border border-fuchsia-100" />
               ))}
             </div>
           )}

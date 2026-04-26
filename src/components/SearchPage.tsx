@@ -4,9 +4,9 @@ import { Post } from "@/types";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import type { ChatCompletionMessageParam } from "openai/resources/index.mjs";
-import { FormEvent, useCallback, useMemo, useRef, useState } from "react";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 import { AiOutlineSearch } from "react-icons/ai";
-import Button from "./Button";
+import { RxReset } from "react-icons/rx";
 import { PostCardProps } from "./PostCard";
 
 
@@ -32,7 +32,7 @@ export const SearchPage = () => {
     }
   })
 
-  const handleSubmit = useCallback((e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = useCallback((e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if(isPending || !inputRef.current) return;
     
@@ -101,15 +101,21 @@ export const SearchPage = () => {
 
         {isPending && <Message content="생각중..." role="assistant"/>}
       </div>
-      <div className="container">
-        <form action="" onSubmit={handleSubmit} className="flex items-center rounded-md border">
-          <input ref={inputRef} type="text" className="flex-1 rounded-md border-gray-300 p-2 pl-3" placeholder="Next.js가 뭐야?" />
-          <IconButton
-            Icon={AiOutlineSearch}
-            type="submit"
-          />
+      <div className="container mt-5">
+        <form action="" onSubmit={handleSubmit} className="flex items-center rounded-lg border-2 border-fuchsia-200 px-2 focus-within:border-fuchsia-400">
+          <input ref={inputRef} type="text" className="flex-1 rounded-2xl p-2 outline-none" placeholder="무엇이든 물어보세요!" />
+          <div className="flex items-center gap-2">
+            <IconButton
+              Icon={AiOutlineSearch}
+              type="submit"
+              className="text-fuchsia-500 hover:text-fuchsia-700"
+            />
+            <IconButton
+              Icon={RxReset}
+              className="text-fuchsia-500 hover:text-fuchsia-700" onClick={handleReset}
+            />
+          </div>
         </form>
-        <Button className="ml-auto mt-2 block w-[100px]" onClick={handleReset}>대화 초기화</Button>
       </div>
     </div>
   )

@@ -25,7 +25,7 @@ export default function PostDtl({ id, title, category, tags, content, created_at
 
   return (
     <>
-      <div className="container flex flex-col gap-8 pb-40">
+      <div className="pretendard container flex flex-col gap-8 pb-40">
         <h1 className="text-4xl font-bold">{title}</h1>
         <div className="flex flex-row items-center gap-2">
           <Link

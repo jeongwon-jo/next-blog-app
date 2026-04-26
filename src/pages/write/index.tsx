@@ -1,4 +1,5 @@
 import Button from "@/components/Button";
+import FileInput from "@/components/FileInput";
 import Input from "@/components/Input";
 import { MarkdownEditor } from "@/components/Markdown";
 import { Post } from "@/types";
@@ -72,7 +73,7 @@ export default function Write({ post }: WriteProps) {
 
   return (
     <div className="container flex flex-col">
-      <h1 className="mb-8 text-center text-2xl font-semibold">{isEdit ? "글 수정하기" : "글 작성하기"}</h1>
+      <h1 className="gradient-text mb-8 text-center text-xl font-semibold">{isEdit ? "글 수정하기" : "글 작성하기"}</h1>
       <form onSubmit={handleSubmit}>
         <div className="flex flex-col gap-3">
           <Input type="text" placeholder="제목" ref={titleRef} defaultValue={post?.title} />
@@ -88,7 +89,7 @@ export default function Write({ post }: WriteProps) {
               </button>
             </div>
           )}
-          <Input type="file" accept="image/*" ref={fileRef} />
+          <FileInput accept="image/*" ref={fileRef} />
           <ReactSelect
             options={existingCategories?.map((c) => ({ label: c, value: c }))}
             placeholder="카테고리"

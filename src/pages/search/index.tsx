@@ -7,3 +7,5 @@ const SearchPage = dynamic(
 export default function Search() {
   return <SearchPage />
 }
+
+Search.noPadding = true
