@@ -3,7 +3,7 @@ import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
 import "@/styles/globals.css";
 import { cn } from "@/utils/style";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { HydrationBoundary, QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { AppProps } from "next/app";
 import Head from "next/head";
 import { useState } from "react";
@@ -11,8 +11,8 @@ import { useState } from "react";
 const SITE_NAME = "JEONG1LOG";
 const DEFAULT_DESCRIPTION = "정원의 개발 블로그";
 
-const queryClient = new QueryClient()
 export default function App({ Component, pageProps }: AppProps) {
+  const [queryClient] = useState(() => new QueryClient());
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const noPadding = (Component as { noPadding?: boolean }).noPadding;
   const { seo } = pageProps;
@@ -37,7 +37,9 @@ export default function App({ Component, pageProps }: AppProps) {
           <Header isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} />
           <div className="flex flex-1 flex-col overflow-y-auto">
             <main className={cn("flex flex-1 flex-col pb-6", !noPadding && "pb-12 pt-8")}>
-              <Component {...pageProps} />
+              <HydrationBoundary state={pageProps.dehydratedState}>
+                <Component {...pageProps} />
+              </HydrationBoundary>
             </main>
             <Footer />
           </div>

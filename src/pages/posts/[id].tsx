@@ -3,14 +3,49 @@ import { MarkdownViewer } from "@/components/Markdown";
 import { Post } from "@/types";
 import { createClient } from "@/utils/supabase/server";
 import { format } from "date-fns";
-import { GetServerSideProps } from "next";
+import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-type PostProps = Post & { id: number };
+const supabase = createClient({});
 
-export default function PostDtl({ id, title, category, tags, content, created_at, preview_image_url }: PostProps) {
+export const getStaticPaths = (async () => {
+  const {data} = await supabase.from("Post").select("id");
+
+  return {
+    paths: data?.map(({id}) => ({params: {id: id.toString()}})) ?? [],
+    fallback: "blocking",
+  }
+}) satisfies GetStaticPaths
+
+export const getStaticProps = (async (context) => {  
+  const { data } = await supabase.from("Post").select("*").eq("id", Number(context.params?.id));
+
+  if (!data || !data[0]) return { notFound: true };
+
+  const { id, title, category, tags, content, created_at, preview_image_url } = data[0];
+
+  return {
+    props: {
+      id: Number(id),
+      title,
+      category,
+      tags: JSON.parse(tags) as string[],
+      content,
+      created_at,
+      preview_image_url,
+      seo: {
+        title,
+        description: content.slice(0, 100),
+        type: "article",
+        image: preview_image_url ?? null,
+      },
+    },
+  };
+}) satisfies GetStaticProps<Post>;
+
+export default function PostDtl({ id, title, category, tags, content, created_at, preview_image_url }: InferGetStaticPropsType<typeof getStaticProps>) {
   const router = useRouter();
 
   const handleDelete = async () => {
@@ -77,31 +112,31 @@ export default function PostDtl({ id, title, category, tags, content, created_at
   );
 }
 
-export const getServerSideProps: GetServerSideProps = async ({ query, req }) => {
-  const { id } = query;
+// export const getServerSideProps: GetServerSideProps = async ({ query, req }) => {
+//   const { id } = query;
 
-  const supabase = createClient(req.cookies);
-  const { data } = await supabase.from("Post").select("*").eq("id", Number(id));
+//   const supabase = createClient(req.cookies);
+//   const { data } = await supabase.from("Post").select("*").eq("id", Number(id));
 
-  if (!data || !data[0]) return { notFound: true };
+//   if (!data || !data[0]) return { notFound: true };
 
-  const { title, category, tags, content, created_at, preview_image_url } = data[0];
+//   const { title, category, tags, content, created_at, preview_image_url } = data[0];
 
-  return {
-    props: {
-      id: Number(id),
-      title,
-      category,
-      tags: JSON.parse(tags) as string[],
-      content,
-      created_at,
-      preview_image_url,
-      seo: {
-        title,
-        description: content.slice(0, 100),
-        type: "article",
-        image: preview_image_url ?? null,
-      },
-    },
-  };
-};
+//   return {
+//     props: {
+//       id: Number(id),
+//       title,
+//       category,
+//       tags: JSON.parse(tags) as string[],
+//       content,
+//       created_at,
+//       preview_image_url,
+//       seo: {
+//         title,
+//         description: content.slice(0, 100),
+//         type: "article",
+//         image: preview_image_url ?? null,
+//       },
+//     },
+//   };
+// };
