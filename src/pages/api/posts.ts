@@ -14,14 +14,20 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Post>,
 ) {
+  const supabase = await createClient(req.cookies);
+
+  if (req.method === "DELETE") {
+    const { error } = await supabase.from("Post").delete().eq("category", "Test");
+    if (error) return res.status(500).end();
+    return res.status(200).end();
+  }
+
   if (req.method !== "POST") return res.status(405).end();
   
   const form = formidable();
   const [fields, files] = await form.parse(req);
 
   let preview_image_url: string | null = null;
-
-  const supabase = await createClient(req.cookies);
 
   if (files.preview_image?.length === 1) {
     const file = files.preview_image[0]

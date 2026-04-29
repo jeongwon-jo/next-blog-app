@@ -1,6 +1,7 @@
 import { FlatCompat } from "@eslint/eslintrc";
 import { dirname } from "path";
 import { fileURLToPath } from "url";
+import cypressPlugin from "eslint-plugin-cypress";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -11,6 +12,10 @@ const compat = new FlatCompat({
 
 const eslintConfig = [
   ...compat.extends("next", "next/typescript", "prettier", "plugin:tailwindcss/recommended"),
+  {
+    ...cypressPlugin.configs.recommended,
+    files: ["cypress/**/*.cy.{ts,tsx,js}", "cypress/**/*.{ts,tsx,js}"],
+  },
   {
     rules: {
       "@typescript-eslint/no-unused-vars": ["warn", { "varsIgnorePattern": "^_" }],

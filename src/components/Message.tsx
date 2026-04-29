@@ -12,7 +12,7 @@ export type MessageProps = {
 
 const Message: FC<MessageProps> = ({ content, role, posts }) => {
   return (
-    <div className={cn("p-4 lg:p-6", role === "user" ? "bg-white" : "bg-fuchsia-50")}>
+    <div className={cn("p-4 lg:p-6", role === "user" ? "bg-white" : "bg-fuchsia-50")} data-cy={`message-${role}`}>
       <div className="container flex items-start gap-3 text-sm lg:gap-4">
         {role === "user"
           ? <BsFillPersonFill className="mt-1 size-6 shrink-0 text-purple-500" />

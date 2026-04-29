@@ -9,4 +9,5 @@
     "source.organizeImports": "explicit",
     "source.fixAll.eslint": "always"
   },
+  "eslint.useFlatConfig": true
 }

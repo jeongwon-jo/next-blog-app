@@ -17,6 +17,7 @@ const Header: FC<HeaderProps> = ({isSidebarOpen, setIsSidebarOpen}) => {
       <IconButton
         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
         Icon={isSidebarOpen ? AiOutlineClose : AiOutlineMenu}
+        label="sidebarLink"
         className="text-pink-500 hover:text-pink-700"
       />
       <Link href={'/'}>
@@ -29,6 +30,7 @@ const Header: FC<HeaderProps> = ({isSidebarOpen, setIsSidebarOpen}) => {
       <IconButton
         Icon={RiRobot2Line}
         component={Link}
+        label="chatBotLink"
         href={'/search'}
         className="text-pink-500 hover:text-pink-700"
       />

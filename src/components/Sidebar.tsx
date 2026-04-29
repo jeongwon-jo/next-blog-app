@@ -22,7 +22,7 @@ const Sidebar:FC<SidebarProps> = ({close, isOpen}) => {
       )}
     >
       <div className="flex justify-end">
-        <IconButton Icon={AiOutlineClose} onClick={close} className="text-pink-400 hover:text-pink-600" />
+        <IconButton Icon={AiOutlineClose} onClick={close} className="text-pink-400 hover:text-pink-600" label="sidebarClose" />
       </div>
       <Link
         href={'/'}
@@ -46,8 +46,8 @@ const Sidebar:FC<SidebarProps> = ({close, isOpen}) => {
         </Link>
       ))}
       <div className="mt-5 flex items-center gap-4">
-        <IconButton Icon={AiFillInstagram} component={Link} href={''} className="text-fuchsia-500 hover:text-pink-500" />
-        <IconButton Icon={AiFillGithub} component={Link} href={''} className="text-fuchsia-500 hover:text-pink-500" />
+        <IconButton Icon={AiFillInstagram} component={Link} href={''} className="text-fuchsia-500 hover:text-pink-500" label="instaLink" />
+        <IconButton Icon={AiFillGithub} component={Link} href={''} className="text-fuchsia-500 hover:text-pink-500" label="githubLink" />
       </div>
     </aside>
   );

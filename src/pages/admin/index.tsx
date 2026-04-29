@@ -44,6 +44,7 @@ export default function Admin() {
             <b className="text-fuchsia-600">{userResponse.data.user.email}</b>님으로 로그인하셨습니다.
           </div>
           <Button type="submit" className="w-full" onClick={() => router.push("/write")}>글쓰러 가기</Button>
+          <Button type="button" className="w-full" onClick={() => {fetch("/api/posts", {method: "DELETE"})}}>테스트 글 삭제</Button>
           <Button type="submit" variant="outline" className="mt-2 w-full" onClick={() => {
             supabase.auth.signOut();
             router.push("/")

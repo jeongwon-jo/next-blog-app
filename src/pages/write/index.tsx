@@ -93,6 +93,7 @@ export default function Write({ post }: WriteProps) {
           <ReactSelect
             options={existingCategories?.map((c) => ({ label: c, value: c }))}
             placeholder="카테고리"
+            inputId="category"
             isMulti={false}
             defaultValue={post ? { label: post.category, value: post.category } : undefined}
             onChange={(e) => e && setCategory(e.value)}
@@ -100,6 +101,7 @@ export default function Write({ post }: WriteProps) {
           <ReactSelect
             options={existingTags?.map((tag) => ({ label: tag, value: tag }))}
             placeholder="태그"
+            inputId="tags"
             isMulti={true}
             defaultValue={post?.tags.map((t) => ({ label: t, value: t }))}
             onChange={(e) => e && setTags(JSON.stringify(e.map((e) => e.value)))}

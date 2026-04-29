@@ -187,8 +187,8 @@ export const SearchPage = () => {
             disabled={isPending}
           />
           <div className="flex items-center gap-2">
-            <IconButton Icon={AiOutlineSearch} type="submit" className="text-fuchsia-500 hover:text-fuchsia-700" />
-            <IconButton Icon={RxReset} className="text-fuchsia-500 hover:text-fuchsia-700" onClick={handleReset} />
+            <IconButton Icon={AiOutlineSearch} type="submit" className="text-fuchsia-500 hover:text-fuchsia-700" label="submitMessage" />
+            <IconButton Icon={RxReset} className="text-fuchsia-500 hover:text-fuchsia-700" onClick={handleReset} label="resetChat" />
           </div>
         </form>
       </div>

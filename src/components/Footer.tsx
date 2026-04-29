@@ -23,6 +23,7 @@ const Footer: FC = () => {
               Icon={userResponse?.data.user ? FiLogIn : FaRegUser}
               iconClassName={userResponse?.data.user ? "" : "!size-5"}
               component={Link}
+              label="adminLink"
               href={'/admin'}
               className="text-fuchsia-400 hover:text-fuchsia-600"
             />
@@ -30,6 +31,7 @@ const Footer: FC = () => {
         <IconButton
           Icon={FaPencilAlt}
           component={Link}
+          label="writeLink"
           href={'/write'}
           iconClassName="!size-5"
           className="text-fuchsia-400 hover:text-fuchsia-600"
