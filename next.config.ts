@@ -5,6 +5,7 @@ const removeImports = removeImportsCreator();
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  turbopack: {},
   images: {
     remotePatterns: [
       {
