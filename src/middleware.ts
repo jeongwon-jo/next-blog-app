@@ -1,16 +1,9 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { createClient } from "./utils/supabase/middleware";
 
-export async function middleware(request: NextRequest) {
-  const { supabase, response } = createClient(request)
-
-  const { data: { user } } = await supabase.auth.getUser()
-
-  if (!user)
-    return NextResponse.redirect(new URL("/admin", request.url))
-  return response
+export function middleware(_request: NextRequest) {
+  return NextResponse.next()
 }
 
 export const config = {
-  matcher: ["/write"],
+  matcher: [],
 }
