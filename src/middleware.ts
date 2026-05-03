@@ -6,7 +6,7 @@ export async function middleware(request: NextRequest) {
 
   const { data: { user } } = await supabase.auth.getUser()
 
-  if (user?.role !== "authenticated") 
+  if (!user)
     return NextResponse.redirect(new URL("/admin", request.url))
   return response
 }
