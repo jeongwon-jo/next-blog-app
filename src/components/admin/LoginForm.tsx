@@ -18,7 +18,7 @@ export const LoginForm = () => {
 
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) return alert("로그인에 실패했습니다.");
-    router.push("/");
+    router.push("/admin");
   };
 
   return (
