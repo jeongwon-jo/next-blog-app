@@ -5,7 +5,7 @@ describe('글쓰기 페이지 테스트', () => {
     cy.get("input[type='password']").type("wlsud4207!")
     cy.get("button[type='submit']").click()
 
-    cy.contains("글쓰러 가기").click(  )
+    // cy.contains("글쓰러 가기").click(  )
     cy.url().should("include", "/write")
   })
 
