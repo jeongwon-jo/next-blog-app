@@ -1,8 +1,8 @@
-import { MarkdownViewer } from "@/components/Markdown";
+import { MarkdownViewer } from "@/components/ui/Markdown";
 import { cn } from "@/utils/style";
 import { FC } from "react";
 import { BsFillPersonFill, BsRobot } from "react-icons/bs";
-import PostCard, { PostCardProps } from "./PostCard";
+import PostCard, { PostCardProps } from "../post/PostCard";
 
 export type MessageProps = {
   content: string;

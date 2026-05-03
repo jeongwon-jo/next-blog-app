@@ -24,7 +24,7 @@ const getFirstMessage = async (supabase: ReturnType<typeof createClient>): Promi
 }
 
 const getBlogContent = async (id: string, supabase: ReturnType<typeof createClient>) => {
-  const { data } = await supabase.from("Post").select("*").eq("id", id)
+  const { data } = await supabase.from("Post").select("*").eq("id", Number(id))
   if (!data) return {}
   return data[0]
 }
@@ -68,7 +68,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   const messages = req.body.messages as ChatCompletionMessageParam[]
-  const supabase = createClient(req.cookies)
+  const supabase = createClient(undefined, req.cookies)
 
   if (messages.length === 1) {
     messages.unshift(await getFirstMessage(supabase))

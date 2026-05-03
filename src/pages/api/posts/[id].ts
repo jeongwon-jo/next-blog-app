@@ -1,5 +1,7 @@
+import { PostUpdate } from "@/types";
 import { createClient } from "@/utils/supabase/server";
 import formidable from "formidable";
+
 import { readFileSync } from "fs";
 import type { NextApiRequest, NextApiResponse } from "next";
 
@@ -13,7 +15,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const id = Number(req.query.id);
   if (isNaN(id)) return res.status(400).end();
 
-  const supabase = createClient(req.cookies);
+  const supabase = createClient(undefined, req.cookies);
 
   if (req.method === "DELETE") {
     const { error } = await supabase.from("Post").delete().eq("id", id);
@@ -44,7 +46,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
     }
 
-    const updateData: Record<string, unknown> = {
+    const updateData: PostUpdate = {
       title: fields.title?.[0],
       category: fields.category?.[0],
       tags: fields.tags?.[0],

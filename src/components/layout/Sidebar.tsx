@@ -3,7 +3,7 @@ import { cn } from "@/utils/style";
 import Link from "next/link";
 import { FC } from "react";
 import { AiFillGithub, AiFillInstagram, AiOutlineClose } from "react-icons/ai";
-import IconButton from "./IconButton";
+import IconButton from "../ui/IconButton";
 
 type SidebarProps = {
   close: () => void;

@@ -4,7 +4,7 @@ import Link from "next/link"
 import { FC } from "react"
 import { AiOutlineClose, AiOutlineMenu } from "react-icons/ai"
 import { RiRobot2Line } from "react-icons/ri"
-import IconButton from "./IconButton"
+import IconButton from "../ui/IconButton"
 
 type HeaderProps = {
   isSidebarOpen: boolean;

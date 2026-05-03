@@ -1,11 +1,13 @@
-import IconButton from "@/components/IconButton";
-import Message, { MessageProps } from "@/components/Message";
+"use client"
+
+import IconButton from "@/components/ui/IconButton";
+import Message, { MessageProps } from "@/components/ui/Message";
 import { Post } from "@/types";
 import type { ChatCompletionMessageParam } from "openai/resources/index.mjs";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AiOutlineSearch } from "react-icons/ai";
 import { RxReset } from "react-icons/rx";
-import { PostCardProps } from "./PostCard";
+import { PostCardProps } from "../post/PostCard";
 
 const SUGGESTED_QUESTIONS = [
   "최근에 쓴 글이 뭐야?",

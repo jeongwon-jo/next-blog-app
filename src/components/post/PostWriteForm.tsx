@@ -1,28 +1,28 @@
-import Button from "@/components/Button";
-import FileInput from "@/components/FileInput";
-import Input from "@/components/Input";
-import { MarkdownEditor } from "@/components/Markdown";
+"use client"
+
+import Button from "@/components/ui/Button";
+import FileInput from "@/components/ui/FileInput";
+import Input from "@/components/ui/Input";
+import { MarkdownEditor } from "@/components/ui/Markdown";
 import { Post } from "@/types";
 import { useCategories, useTags } from "@/utils/hooks";
-import { createClient } from "@/utils/supabase/server";
-import { GetServerSideProps } from "next";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import ReactSelect from "react-select/creatable";
 
-type WriteProps = {
-  post?: Post & { id: number };
-};
+interface IPostWriteForm{
+  post?: Post | null;
+  isEdit: boolean;
+}
 
-export default function Write({ post }: WriteProps) {
+export default function PostWriteForm({post, isEdit}: IPostWriteForm) {
   const router = useRouter();
   const fileRef = useRef<HTMLInputElement>(null);
-  const isEdit = !!post;
 
   const { data: existingCategories } = useCategories();
   const { data: existingTags } = useTags();
-
+  
   const titleRef = useRef<HTMLInputElement>(null);
   const [category, setCategory] = useState(post?.category ?? "");
   const [tags, setTags] = useState(post ? JSON.stringify(post.tags) : "[]");
@@ -49,7 +49,7 @@ export default function Write({ post }: WriteProps) {
       formData.append("remove_image", "true");
     }
 
-    if (isEdit) {
+    if (isEdit && post) {
       const response = await fetch(`/api/posts/${post.id}`, {
         method: "PUT",
         body: formData,
@@ -117,24 +117,5 @@ export default function Write({ post }: WriteProps) {
         </Button>
       </form>
     </div>
-  );
+  )
 }
-
-export const getServerSideProps: GetServerSideProps<WriteProps> = async ({ query, req }) => {
-  const { id } = query;
-  if (!id) return { props: {} };
-
-  const supabase = createClient(req.cookies);
-  const { data } = await supabase.from("Post").select("*").eq("id", Number(id)).single();
-
-  if (!data) return { notFound: true };
-
-  return {
-    props: {
-      post: {
-        ...data,
-        tags: JSON.parse(data.tags) as string[],
-      },
-    },
-  };
-};
