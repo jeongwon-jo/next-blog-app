@@ -8,7 +8,7 @@ import type {
   ChatCompletionSystemMessageParam,
 } from "openai/resources/index.mjs"
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
+const getOpenAI = () => new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
 
 const getFirstMessage = async (supabase: ReturnType<typeof createClient>): Promise<ChatCompletionSystemMessageParam> => {
   const { data: postMetadataList } = await supabase.from("Post").select("id, title, category, tags")
@@ -55,6 +55,7 @@ type ToolCallBuffer = {
 export async function POST(request: NextRequest) {
   const { messages } = (await request.json()) as { messages: ChatCompletionMessageParam[] }
   const supabase = createClient(await cookies())
+  const openai = getOpenAI()
   const encoder = new TextEncoder()
 
   const stream = new ReadableStream({
