@@ -5,6 +5,8 @@ describe('글쓰기 페이지 테스트', () => {
     cy.get("input[type='password']").type("wlsud4207!")
     cy.get("button[type='submit']").click()
 
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(1000)
     cy.contains("글쓰러 가기").click()
     cy.url().should("include", "/write")
   })
