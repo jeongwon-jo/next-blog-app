@@ -1,5 +1,4 @@
 import { createClient } from "@/utils/supabase/server"
-import { NextApiResponse } from "next"
 import { cookies } from "next/headers"
 import { NextRequest } from "next/server"
 import OpenAI from "openai"
@@ -53,103 +52,104 @@ type ToolCallBuffer = {
   function: { name: string; arguments: string }
 }
 
-export async function POST(res: NextApiResponse, request: NextRequest) {
-  const {messages} = (await request.json()) as {messages: ChatCompletionMessageParam[]}
-  res.setHeader("Content-Type", "text/event-stream")
-  res.setHeader("Cache-Control", "no-cache, no-transform")
-  res.setHeader("Connection", "keep-alive")
-  res.setHeader("X-Accel-Buffering", "no")
-
-  // Node.js 소켓 버퍼링 비활성화
-  if (res.socket) res.socket.setNoDelay(true)
-
-  const send = (data: object) => {
-    res.write(`data: ${JSON.stringify(data)}\n\n`)
-    ;(res as unknown as { flush?: () => void }).flush?.()
-  }
-
+export async function POST(request: NextRequest) {
+  const { messages } = (await request.json()) as { messages: ChatCompletionMessageParam[] }
   const supabase = createClient(await cookies())
+  const encoder = new TextEncoder()
 
-  if (messages.length === 1) {
-    messages.unshift(await getFirstMessage(supabase))
-  }
-
-  try {
-    // Phase 1: stream: true로 시작 — tool_calls인지 content인지 실시간으로 감지
-    const firstStream = await openai.chat.completions.create({
-      messages,
-      model: "gpt-4o",
-      tools,
-      tool_choice: "auto",
-      stream: true,
-    })
-
-    let directContent = ""
-    const toolCallsBuffer: Record<number, ToolCallBuffer> = {}
-
-    for await (const chunk of firstStream) {
-      const delta = chunk.choices[0]?.delta
-
-      if (delta?.content) {
-        // tool 없이 직접 답변하는 경우 → 즉시 클라이언트에 전송 (진짜 스트리밍)
-        directContent += delta.content
-        send({ type: "chunk", content: delta.content })
+  const stream = new ReadableStream({
+    async start(controller) {
+      const send = (data: object) => {
+        controller.enqueue(encoder.encode(`data: ${JSON.stringify(data)}\n\n`))
       }
 
-      if (delta?.tool_calls) {
-        // tool_call은 클라이언트에 안 보내고 버퍼에만 모음
-        for (const tc of delta.tool_calls) {
-          if (!toolCallsBuffer[tc.index]) {
-            toolCallsBuffer[tc.index] = { id: "", type: "function", function: { name: "", arguments: "" } }
+      if (messages.length === 1) {
+        messages.unshift(await getFirstMessage(supabase))
+      }
+
+      try {
+        // Phase 1: stream: true로 시작 — tool_calls인지 content인지 실시간으로 감지
+        const firstStream = await openai.chat.completions.create({
+          messages,
+          model: "gpt-4o",
+          tools,
+          tool_choice: "auto",
+          stream: true,
+        })
+
+        let directContent = ""
+        const toolCallsBuffer: Record<number, ToolCallBuffer> = {}
+
+        for await (const chunk of firstStream) {
+          const delta = chunk.choices[0]?.delta
+
+          if (delta?.content) {
+            directContent += delta.content
+            send({ type: "chunk", content: delta.content })
           }
-          if (tc.id) toolCallsBuffer[tc.index].id = tc.id
-          if (tc.function?.name) toolCallsBuffer[tc.index].function.name += tc.function.name
-          if (tc.function?.arguments) toolCallsBuffer[tc.index].function.arguments += tc.function.arguments
+
+          if (delta?.tool_calls) {
+            for (const tc of delta.tool_calls) {
+              if (!toolCallsBuffer[tc.index]) {
+                toolCallsBuffer[tc.index] = { id: "", type: "function", function: { name: "", arguments: "" } }
+              }
+              if (tc.id) toolCallsBuffer[tc.index].id = tc.id
+              if (tc.function?.name) toolCallsBuffer[tc.index].function.name += tc.function.name
+              if (tc.function?.arguments) toolCallsBuffer[tc.index].function.arguments += tc.function.arguments
+            }
+          }
         }
+
+        const toolCalls = Object.values(toolCallsBuffer)
+
+        if (toolCalls.length > 0) {
+          messages.push({
+            role: "assistant",
+            content: directContent || null,
+            tool_calls: toolCalls,
+          } as ChatCompletionAssistantMessageParam)
+
+          for (const tc of toolCalls) {
+            if (tc.type !== "function") continue
+            const { id } = JSON.parse(tc.function.arguments)
+            const result = await getBlogContent(id, supabase)
+            messages.push({ role: "tool", tool_call_id: tc.id, content: JSON.stringify(result) })
+          }
+
+          // Phase 2: tool 결과 기반 최종 답변 스트리밍
+          const finalStream = await openai.chat.completions.create({
+            messages,
+            model: "gpt-4o",
+            stream: true,
+          })
+
+          let finalContent = ""
+          for await (const chunk of finalStream) {
+            const text = chunk.choices[0]?.delta?.content ?? ""
+            finalContent += text
+            if (text) send({ type: "chunk", content: text })
+          }
+
+          messages.push({ role: "assistant", content: finalContent })
+        } else {
+          messages.push({ role: "assistant", content: directContent })
+        }
+
+        send({ type: "done", messages: messages.slice(1) })
+      } catch {
+        send({ type: "error", message: "답변을 가져오지 못했어요. 다시 시도해주세요." })
+      } finally {
+        controller.close()
       }
-    }
+    },
+  })
 
-    const toolCalls = Object.values(toolCallsBuffer)
-
-    if (toolCalls.length > 0) {
-      // tool call이 있었음 → 결과 가져와서 Phase 2 스트리밍
-      messages.push({
-        role: "assistant",
-        content: directContent || null,
-        tool_calls: toolCalls,
-      } as ChatCompletionAssistantMessageParam)
-
-      for (const tc of toolCalls) {
-        if (tc.type !== "function") continue
-        const { id } = JSON.parse(tc.function.arguments)
-        const result = await getBlogContent(id, supabase)
-        messages.push({ role: "tool", tool_call_id: tc.id, content: JSON.stringify(result) })
-      }
-
-      // Phase 2: tool 결과 기반 최종 답변 스트리밍
-      const finalStream = await openai.chat.completions.create({
-        messages,
-        model: "gpt-4o",
-        stream: true,
-      })
-
-      let finalContent = ""
-      for await (const chunk of finalStream) {
-        const text = chunk.choices[0]?.delta?.content ?? ""
-        finalContent += text
-        if (text) send({ type: "chunk", content: text })
-      }
-
-      messages.push({ role: "assistant", content: finalContent })
-    } else {
-      // tool 없이 직접 답변 — 이미 Phase 1에서 실시간으로 스트리밍됨
-      messages.push({ role: "assistant", content: directContent })
-    }
-
-    send({ type: "done", messages: messages.slice(1) })
-  } catch {
-    send({ type: "error", message: "답변을 가져오지 못했어요. 다시 시도해주세요." })
-  }
-
-  return Response.json({messages})
+  return new Response(stream, {
+    headers: {
+      "Content-Type": "text/event-stream",
+      "Cache-Control": "no-cache, no-transform",
+      "Connection": "keep-alive",
+      "X-Accel-Buffering": "no",
+    },
+  })
 }
