@@ -1,5 +1,7 @@
 import { createClient } from "@/utils/supabase/server"
-import { NextApiRequest, NextApiResponse } from "next"
+import { NextApiResponse } from "next"
+import { cookies } from "next/headers"
+import { NextRequest } from "next/server"
 import OpenAI from "openai"
 import type {
   ChatCompletionAssistantMessageParam,
@@ -51,9 +53,8 @@ type ToolCallBuffer = {
   function: { name: string; arguments: string }
 }
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method !== "POST") return res.status(405).end()
-
+export async function POST(res: NextApiResponse, request: NextRequest) {
+  const {messages} = (await request.json()) as {messages: ChatCompletionMessageParam[]}
   res.setHeader("Content-Type", "text/event-stream")
   res.setHeader("Cache-Control", "no-cache, no-transform")
   res.setHeader("Connection", "keep-alive")
@@ -67,8 +68,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     ;(res as unknown as { flush?: () => void }).flush?.()
   }
 
-  const messages = req.body.messages as ChatCompletionMessageParam[]
-  const supabase = createClient(undefined, req.cookies)
+  const supabase = createClient(await cookies())
 
   if (messages.length === 1) {
     messages.unshift(await getFirstMessage(supabase))
@@ -151,5 +151,5 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     send({ type: "error", message: "답변을 가져오지 못했어요. 다시 시도해주세요." })
   }
 
-  res.end()
+  return Response.json({messages})
 }
