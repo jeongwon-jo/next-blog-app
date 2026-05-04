@@ -1,9 +1,12 @@
 import { Database } from "@/types/supabase";
 import { createServerClient } from "@supabase/ssr";
-import { cookies as getCookies } from "next/headers";
+
+type CookieStore = {
+  getAll(): { name: string; value: string }[];
+};
 
 export const createClient = (
-  cookies?: Awaited<ReturnType<typeof getCookies>>,
+  cookies?: CookieStore,
   legacyCookies?: Partial<{ [key: string]: string }>,
 ) => {
   return createServerClient<Database>(

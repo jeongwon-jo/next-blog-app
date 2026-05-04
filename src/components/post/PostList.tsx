@@ -2,6 +2,7 @@
 
 import PostCard from "@/components/post/PostCard";
 import { Post } from "@/types";
+import { getPosts } from "@/utils/fetch";
 import { cn } from "@/utils/style";
 import { createClient } from "@/utils/supabase/client";
 import { useInfiniteQuery } from "@tanstack/react-query";
@@ -22,18 +23,10 @@ const PostList: FC<PostListProps> = ({ category, tag, className, initialPosts })
   const { data: postPages, fetchNextPage, hasNextPage } = useInfiniteQuery({
     queryKey: ["posts", category ?? null, tag ?? null],
     queryFn: async ({ pageParam }) => {
-      let request = supabase.from("Post").select("*");
+      const posts = await getPosts({category, tag, page:pageParam})
+      if (!posts) return { posts: [], nextPage: null };
 
-      if (category) request = request.eq("category", category);
-      if (tag) request = request.like("tags", `%${tag}%`);
-
-      const { data } = await request
-        .order("created_at", { ascending: false })
-        .range(pageParam, pageParam + 4);
-
-      if (!data) return { posts: [], nextPage: null };
-
-      return { posts: data, nextPage: data.length === 5 ? pageParam + 5 : null };
+      return { posts: posts, nextPage: posts.length === 5 ? pageParam + 5 : null };
     },
     initialData: initialPosts ? {
       pages: [{ posts: initialPosts, nextPage: initialPosts.length === 5 ? 5 : null }],
