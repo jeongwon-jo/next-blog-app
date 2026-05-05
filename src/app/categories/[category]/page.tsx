@@ -1,8 +1,15 @@
 import PostList from "@/components/post/PostList";
 import { getCategories, getPosts } from "@/utils/fetch";
-import { createClient } from "@/utils/supabase/server";
+import { Metadata } from "next";
 
-const supabase = createClient();
+export const generateMetadata = async ({ params }: { params: Promise<{ category: string }> }) : Promise<Metadata> => {
+  const { category } = await params;
+  
+  return {
+    title: `JEONG1LOG - ${decodeURIComponent(category)}`,
+    description: "정원의 개발 블로그",
+  }
+}
 
 // 빌드 시점 호출
 export const generateStaticParams = async () => {
